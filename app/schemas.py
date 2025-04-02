@@ -13,11 +13,8 @@ class UserCreate(BaseModel):
     password: constr(min_length=8)
     password_confirmation: str
 
-    class Config:
-        from_attributes = True
 
-
-class User(BaseModel):
+class UserGet(BaseModel):
     id: int
     first_name: str
     last_name: str
@@ -26,8 +23,27 @@ class User(BaseModel):
     school: Optional[str]
     email: EmailStr
 
-    class Config:
-        from_attributes = True
+
+class UserResponse(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    age: int
+    grade: Optional[str]
+    school: Optional[str]
+    email: EmailStr
+    rating: int
+    avatar: Optional[str]
+
+
+class Token(BaseModel):
+    auth_token: str
+    token_type: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
 
 class TaskCreate(BaseModel):
@@ -39,6 +55,3 @@ class Task(BaseModel):
     id: int
     question: str
     answer: str
-
-    class Config:
-        from_attributes = True

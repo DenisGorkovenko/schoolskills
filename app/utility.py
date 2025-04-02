@@ -4,10 +4,7 @@ from jose import jwt
 from typing import Optional
 
 import base64
-
-SECRET_KEY = '3xg4k5g7k65yg87ht8df34h65e8fd7r53uf98uj04e0g9e04s573dg8940fuj9e4t6073e'
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+import config
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -25,9 +22,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.utcnow() + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, config.SECRET_KEY, algorithm=config.ALGORITHM)
     return encoded_jwt
 
 
