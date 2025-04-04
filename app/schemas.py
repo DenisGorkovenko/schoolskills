@@ -5,13 +5,12 @@ from typing import Optional
 class UserCreate(BaseModel):
     first_name: str
     last_name: str
-    age: int
+    age: str
     grade: Optional[str] = None
     school: Optional[str] = None
     avatar: Optional[bytes] = None
     email: EmailStr
     password: constr(min_length=8)
-    password_confirmation: str
 
 
 class UserGet(BaseModel):

@@ -11,7 +11,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
-    age = Column(Integer, nullable=False)
+    age = Column(String, nullable=False)
     grade = Column(String, nullable=True)
     school = Column(String, nullable=True)
     avatar = Column(LargeBinary, nullable=True)

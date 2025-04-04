@@ -9,6 +9,8 @@ import schemas
 import models
 import config
 
+import logging
+
 router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/users/token/login_user/')
@@ -17,19 +19,21 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/users/token/login_user/')
 async def get_current_user(token: str = Depends(oauth2_scheme), db: SessionLocal = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"}
+        detail='Could not validate credentials',
+        headers={'WWW-Authenticate': 'Bearer'}
     )
     try:
         payload = jwt.decode(token, config.SECRET_KEY, algorithms=config.ALGORITHM)
-        email: str = payload.get("sub")
+        email: str = payload.get('sub')
         if email is None:
             raise credentials_exception
-    except JWTError:
+
+    except JWTError as e:
         raise credentials_exception
     user = db.query(models.User).filter(models.User.email == email).first()
     if not user:
         raise credentials_exception
+
     return user
 
 
@@ -48,16 +52,16 @@ def get_response_user(user):
 
 
 # Получение всех пользователей из базы данных
-@router.get('/', response_model=List[schemas.UserGet])
+@router.get('/get_all_users/', response_model=List[schemas.UserGet])
 def get_all_users(db: SessionLocal = Depends(get_db)):
     users = db.query(models.User).all()
     if not users:
-        raise HTTPException(status_code=404, detail="No users found")
+        raise HTTPException(status_code=404, detail='Нет ни одного зарегистрированного пользователя')
     return users
 
 
 # Регистрация нового пользователя и запись в базу данных
-@router.post('/', status_code=status.HTTP_201_CREATED)
+@router.post('/create_users/', status_code=status.HTTP_201_CREATED)
 def create_users(user: schemas.UserCreate, db: SessionLocal = Depends(get_db)):
     exists = (db.query(models.User).filter(models.User.email == user.email).all())
     if len(exists) > 0:
