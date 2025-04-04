@@ -46,12 +46,21 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class TaskCreate(BaseModel):
-    question: str
-    answer: str
+class AvatarUpload(BaseModel):
+    avatar: str
 
 
-class Task(BaseModel):
-    id: int
+class MathExpression(BaseModel):
     question: str
-    answer: str
+    answer: int
+
+
+class ComparisonExp(BaseModel):
+    left_expression: str
+    right_expression: str
+    comparison_sign: str
+
+
+class QuestionCreate(BaseModel):
+    question: str
+    answer: int

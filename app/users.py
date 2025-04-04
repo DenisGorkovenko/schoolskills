@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing import List
-from app.utility import get_password_hash, verify_password, create_access_token, encode_image
+from app.utility import get_password_hash, verify_password, create_access_token, encode_image, decode_image
 from database import get_db, SessionLocal
 from jose import jwt, JWTError
 
@@ -101,6 +101,32 @@ def logout_user():
     return {'message': 'Успешно'}
 
 
+# Возвращает авторизованного пользователя
 @router.get('/me/', response_model=schemas.UserResponse)
 def get_current_profile_user(current_user: models.User = Depends(get_current_user)):
     return get_response_user(current_user)
+
+
+# Изменение аватара
+@router.put('/me/avatar/')
+def update_avatar(avatar_data: schemas.AvatarUpload,
+                  current_user: models.User = Depends(get_current_user),
+                  db: SessionLocal = Depends(get_db)):
+    try:
+        decoded_file = decode_image(avatar_data.avatar)
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail='Invalid string'
+        )
+    current_user.avatar = decoded_file
+    db.commit()
+    return {'message': 'Аватар успешно изменен!'}
+
+
+# Удаление аватара
+@router.delete('/me/avatar/')
+def delete_avatar(current_user: models.User = Depends(get_current_user), db: SessionLocal = Depends(get_db)):
+    current_user.avatar = None
+    db.commit()
+    return {'message': 'Аватар удален!'}
