@@ -192,7 +192,7 @@ def check_answer_task(task_id: int, user_answer: str,
     task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail='Задачи не существует!')
-    print(f"user_answer: '{user_answer}', task.answer: '{task.answer}'")
+
     is_correct = user_answer == task.answer
     if is_correct:
         user.right_answer += 1
