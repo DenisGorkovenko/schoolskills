@@ -62,4 +62,4 @@ class ComparisonExp(BaseModel):
 
 class QuestionCreate(BaseModel):
     question: str
-    answer: int
+    answer: str

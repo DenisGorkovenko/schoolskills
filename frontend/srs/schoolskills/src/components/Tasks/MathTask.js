@@ -2,15 +2,18 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const MathTask = () => {
-  const [task, setTask] = useState(null);
-  const [subtractionTask, setSubtractionTask] = useState(null); // Состояние для второго задания
-  const [hundredTask, setHundredTask] = useState(null); // Состояние для третьего задания
+  const [task, setTask] = useState(null); // Состояние для 1 задания
+  const [subtractionTask, setSubtractionTask] = useState(null); // Состояние для 2 задания
+  const [hundredTask, setHundredTask] = useState(null); // Состояние для 3 задания
+  const [question, setQuestion] = useState(null); // Состояние для 4 задания
   const [userAnswer, setUserAnswer] = useState('');
-  const [subtractionUserAnswer, setSubtractionUserAnswer] = useState(''); // Состояние для ответа на второе задание
-  const [hundredUserAnswer, setHundredUserAnswer] = useState(''); // Состояние для ответа на третье задание
+  const [subtractionUserAnswer, setSubtractionUserAnswer] = useState(''); // Состояние для ответа на 2 задание
+  const [hundredUserAnswer, setHundredUserAnswer] = useState(''); // Состояние для ответа на 3 задание
+  const [questionUserAnswer, setQuestionUserAnswer] = useState(''); // Состояние для ответа на 4 задание
   const [message, setMessage] = useState('');
-  const [subtractionMessage, setSubtractionMessage] = useState(''); // Сообщение для второго задания
-  const [hundredMessage, setHundredMessage] = useState(''); // Сообщение для второго задания
+  const [subtractionMessage, setSubtractionMessage] = useState(''); // Сообщение для 2 задания
+  const [hundredMessage, setHundredMessage] = useState(''); // Сообщение для 3 задания
+  const [questionMessage, setQuestionMessage] = useState(''); // Сообщение для 4 задания
 
   // Функция для получения задания на таблицы умножения
   const fetchTask = async () => {
@@ -57,6 +60,23 @@ const MathTask = () => {
     }
   };
 
+  // Функция для получения задач из базы
+  const fetchQuestion = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/tasks/random_task/', {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+        },
+      });
+      setQuestion(response.data);
+      setQuestionMessage('');
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  };
+
+  
+
   // Функция для обработки отправки ответа на таблицу умножения
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,7 +117,7 @@ const MathTask = () => {
     }
   };
 
-  // Функция для обработки отправки ответа на сложение и вычитание до 20
+  // Функция для обработки отправки ответа на сложение и вычитание до 100
   const handleHundredSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -117,11 +137,33 @@ const MathTask = () => {
     }
   };
 
+  // Функция для обработки отправки ответа на задачи
+  const handleQuestionSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:8000/api/tasks/check_answer_task/', {
+        task_id: Number(question.task_id),
+        user_answer: questionUserAnswer,
+      }, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+        },
+      });
+      console.log(response.data)
+      setQuestionMessage(response.data.message);
+      setQuestionUserAnswer('');
+    } catch (error) {
+      console.error(error.response.data);
+      setQuestionMessage(error.response.data.detail);
+    }
+  };
+
   // Используем useEffect для получения заданий при монтировании компонента
   useEffect(() => {
     fetchTask();
     fetchSubtractionTask();
-    fetchHundredTask(); 
+    fetchHundredTask();
+    fetchQuestion(); 
   }, []);
 
   const handleFetchNewTask = async () => {
@@ -134,6 +176,10 @@ const MathTask = () => {
 
   const handleFetchNewHundredTask = async () => {
     await fetchHundredTask(); 
+  };
+
+  const handleFetchNewQuestion = async () => {
+    await fetchQuestion(); 
   };
 
   return (
@@ -191,6 +237,24 @@ const MathTask = () => {
       )}
       <button onClick={handleFetchNewHundredTask} style={{ padding: '10px', marginTop: '10px' }}>Получить новое задание</button>
       {hundredMessage && <p style={{ marginTop: '20px', marginBottom: '0' }}>{hundredMessage}</p>} {/* Сообщение для вычитания */}
+
+      <h2 style={{ marginTop: '40px', marginBottom: '20px' }}>Тренировка решения задач</h2>
+      {question && (
+        <form onSubmit={handleQuestionSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '300px' }}>
+          <p style={{ marginBottom: '10px' }}>{question.question}</p>
+          <input
+            type="number"
+            value={questionUserAnswer}
+            onChange={(e) => setQuestionUserAnswer(e.target.value)}
+            placeholder="Ваш ответ"
+            required
+            style={{ padding: '10px', marginBottom: '10px', width: '100%' }}
+          />
+          <button type="submit" style={{ padding: '10px', marginBottom: '10px' }}>Проверить ответ</button>
+        </form>
+      )}
+      <button onClick={handleFetchNewQuestion} style={{ padding: '10px', marginTop: '10px' }}>Получить новое задание</button>
+      {questionMessage && <p style={{ marginTop: '20px', marginBottom: '0' }}>{questionMessage}</p>} {/* Сообщение для вычитания */}
     </div>
   );
 };

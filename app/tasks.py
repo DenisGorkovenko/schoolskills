@@ -172,7 +172,7 @@ def math_question_add(quest_data: schemas.QuestionCreate,
 
 
 # 5. Решение задач
-@router.get('/random_task_ramdom/')
+@router.get('/random_task/')
 def get_random_task(db: SessionLocal = Depends(get_db), current_user: str = Depends(get_current_user)):
     tasks = db.query(models.Task).all()
     if not tasks:
@@ -192,7 +192,7 @@ def check_answer_task(task_id: int, user_answer: str,
     task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail='Задачи не существует!')
-
+    print(f"user_answer: '{user_answer}', task.answer: '{task.answer}'")
     is_correct = user_answer == task.answer
     if is_correct:
         user.right_answer += 1

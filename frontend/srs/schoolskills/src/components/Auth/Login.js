@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+
 const Login = () => {
   const [credentials, setCredentials] = useState({
     email: '',
@@ -29,22 +30,75 @@ const Login = () => {
      
       axios.defaults.headers.common['Authorization'] = `${token_type} ${auth_token}`;
 
-      // Перенаправьте пользователя на другую страницу
-      navigate ('/profile'); // Замените на нужный маршрут
+      navigate ('/profile');
     } catch (error) {
       console.error(error.response.data);
-      setError('Ошибка входа. Проверьте свои учетные данные.'); // Установите сообщение об ошибке
+      setError('Ошибка входа. Проверьте свои учетные данные.');
     }
   };
 
+  const styles = {
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      height: '100vh', // Занять всю высоту экрана
+      backgroundColor: '#f0f0f0', // Цвет фона
+      paddingTop: '20px',
+    },
+    title: {
+      marginBottom: '20px',
+    },
+    form: {
+      display: 'flex',
+      flexDirection: 'column',
+      width: '300px', // Ширина формы
+    },
+    input: {
+      marginBottom: '10px',
+      padding: '10px',
+      fontSize: '16px',
+      border: '1px solid #ccc',
+      borderRadius: '4px',
+    },
+    button: {
+      padding: '10px',
+      fontSize: '16px',
+      backgroundColor: '#007bff',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+    },
+    error: {
+      color: 'red',
+      marginTop: '10px',
+    },
+  };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input name="email" type="email" onChange={handleChange} placeholder="Email" required />
-        <input name="password" type="password" onChange={handleChange} placeholder="Password" required />
-        <button type="submit">Login</button>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Вход в Аккаунт</h2>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          name="email"
+          type="email"
+          onChange={handleChange}
+          placeholder="Email"
+          required
+          style={styles.input}
+        />
+        <input
+          name="password"
+          type="password"
+          onChange={handleChange}
+          placeholder="Password"
+          required
+          style={styles.input}
+        />
+        <button type="submit" style={styles.button}>Войти</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Отображение сообщения об ошибке */}
+      {error && <p style={styles.error}>{error}</p>}
     </div>
   );
 };

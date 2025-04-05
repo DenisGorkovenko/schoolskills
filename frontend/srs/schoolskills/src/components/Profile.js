@@ -61,25 +61,91 @@ const Profile = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:8000/api/users/token/logout_user/', {}, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+        },
+      });
+      localStorage.removeItem('token');
+      navigate('/');
+    } catch (error) {
+      console.error('Ошибка при выходе:', error.response.data);
+    }
+  };
+
   const handleNavigateToMathTasks = () => {
     navigate('/tasks'); 
   };
 
+  const styles = {
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      height: '100vh', // Занять всю высоту экрана
+      backgroundColor: '#f0f0f0', // Цвет фона
+      paddingTop: '20px',
+    },
+    title: {
+      marginBottom: '20px',
+    },
+    profile: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center',
+      width: '300px', // Ширина контейнера
+    },
+    avatar: {
+      width: '100px',
+      height: '100px',
+      borderRadius: '50%', // Круглая форма аватара
+      marginBottom: '10px', // Отступ снизу
+    },
+    button: {
+      marginTop: '20px',
+      padding: '10px',
+      fontSize: '16px',
+      backgroundColor: '#007bff',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+    },
+    fileInput: {
+      marginTop: '10px',
+    },
+  };
+
   return (
-    <div>
-      {user && (
+    <div style={styles.container}>
+  {user && (
+    <div style={styles.profile}>
+      <h2 style={styles.title}>Профиль пользователя</h2>
+      <p>Имя: {user.first_name}</p>
+      <p>Фамилия: {user.last_name}</p>
+      <p>Класс: {user.grade}</p>
+      <p>Школа: {user.school}</p>
+      <p>Email: {user.email}</p>
+      <p>Рейтинг: {user.rating}</p>
+      {avatar ? (
         <div>
-          <h2>Профиль пользователя</h2>
-          <p>Имя: {user.first_name}</p>
-          <p>Фамилия: {user.last_name}</p>
-          <p>Email: {user.email}</p>
-          <input type="file" onChange={handleAvatarChange} />
-          <button onClick={handleAvatarDelete}>Удалить аватар</button>
-          {avatar && <img src={avatar} alt="Avatar" style={{ width: '100px', height: '100px' }} />}
-          <button onClick={handleNavigateToMathTasks}>Перейти к заданиям</button>
+          <img src={avatar} alt="Avatar" style={styles.avatar} />
+          <button onClick={handleAvatarDelete} style={styles.button}>Удалить аватар</button>
+        </div>
+      ) : (
+        <div>
+          <input type="file" onChange={handleAvatarChange} style={styles.fileInput} />
+          <p>Добавить аватар</p>
         </div>
       )}
+      <button onClick={handleNavigateToMathTasks} style={styles.button}>Перейти к заданиям</button>
+      <button onClick={handleLogout} style={styles.button}>Выйти</button>
     </div>
+  )}
+</div>
   );
 };
 

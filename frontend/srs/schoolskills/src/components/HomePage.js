@@ -15,10 +15,25 @@ const HomePage = () => {
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>Добро пожаловать на SchoolSkills</h1>
-      <button onClick={handleLogin} style={{ margin: '10px', padding: '10px 20px' }}>
+      <button onClick={handleLogin} style={{
+        marginRight: '20px', 
+        padding: '10px',
+        fontSize: '16px',
+        backgroundColor: '#007bff',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer', }}>
         Войти
       </button>
-      <button onClick={handleRegister} style={{ margin: '10px', padding: '10px 20px' }}>
+      <button onClick={handleRegister} style={{ 
+      padding: '10px',
+      fontSize: '16px',
+      backgroundColor: '#007bff',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer', }}>
         Регистрация
       </button>
     </div>
